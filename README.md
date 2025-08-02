@@ -73,7 +73,57 @@ A powerful, high-performance CSV viewer and analysis tool built with React, Type
 
 5. **Run Tauri app (desktop)**
    ```bash
-   npm run tauri dev
+   npm run tauri:dev
+   ```
+
+## 📱 Production Build
+
+### Build for macOS
+
+1. **Quick production build**
+   ```bash
+   ./deploy.sh
+   ```
+
+2. **Manual build commands**
+   ```bash
+   # Build for current architecture (Apple Silicon)
+   npm run build:production
+   
+   # Build for Intel Macs
+   npm run build:mac-intel
+   
+   # Build Universal binary (both architectures)
+   npm run build:universal
+   ```
+
+3. **Build outputs**
+   - **DMG Installer**: `src-tauri/target/release/bundle/dmg/AirTable CSV Viewer_1.0.0_aarch64.dmg`
+   - **App Bundle**: `src-tauri/target/release/bundle/macos/AirTable CSV Viewer.app`
+
+### Code Signing (Optional)
+
+For production distribution, configure code signing:
+
+1. **Set up certificates**
+   - Get Apple Developer account
+   - Install Developer ID certificates
+   - Configure signing identity in `tauri.conf.json`
+
+2. **Update configuration**
+   ```json
+   "signingIdentity": "Developer ID Application: Your Name (TEAM_ID)",
+   "hardenedRuntime": true,
+   "entitlements": "entitlements.plist"
+   ```
+
+3. **Notarization for Gatekeeper**
+   ```bash
+   xcrun notarytool submit "AirTable CSV Viewer_1.0.0_aarch64.dmg" \
+     --apple-id "$APPLE_ID" \
+     --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+     --team-id "$APPLE_TEAM_ID" \
+     --wait
    ```
 
 ## 🚀 Usage

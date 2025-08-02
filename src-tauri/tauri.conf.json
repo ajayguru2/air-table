@@ -1,50 +1,84 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "CSV Analyzer",
-  "version": "0.1.0",
-  "identifier": "com.csvanalyzer.app",
+  "productName": "AirTable CSV Viewer",
+  "version": "1.0.0",
+  "identifier": "com.airtable.csvviewer",
   "build": {
-    "beforeDevCommand": "bun run dev",
+    "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "bun run build",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
   "app": {
     "windows": [
       {
-        "title": "CSV Analyzer",
-        "width": 1200,
-        "height": 800,
-        "minWidth": 800,
-        "minHeight": 600,
+        "title": "AirTable CSV Viewer",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 1000,
+        "minHeight": 700,
         "resizable": true,
         "maximizable": true,
         "decorations": true,
         "transparent": false,
         "alwaysOnTop": false,
         "skipTaskbar": false,
-        "center": true
+        "center": true,
+        "titleBarStyle": "Visible"
       }
     ],
     "security": {
-      "csp": null
-    }
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; script-src 'self' 'unsafe-eval'"
+    },
+    "macOSPrivateApi": false
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["dmg", "app"],
     "icon": [
+      "icons/16x16.png",
       "icons/32x32.png",
+      "icons/64x64.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
+      "icons/256x256.png",
+      "icons/512x512.png",
+      "icons/1024x1024.png",
       "icons/icon.icns",
-      "icons/icon.ico"
+      "icons/icon.ico",
+      "icons/icon.png"
     ],
     "category": "Productivity",
-    "copyright": "Copyright (c) 2024 CSV Analyzer",
+    "shortDescription": "High-performance CSV viewer and analyzer",
+    "longDescription": "A powerful CSV viewer with advanced analysis features, trend visualization, and resizable console interface for data professionals.",
+    "copyright": "Copyright © 2024 AirTable CSV Viewer. All rights reserved.",
+    "licenseFile": "../LICENSE",
     "macOS": {
       "frameworks": [],
-      "minimumSystemVersion": "10.13"
+      "minimumSystemVersion": "10.15",
+      "signingIdentity": null,
+      "hardenedRuntime": true,
+      "entitlements": null,
+      "exceptionDomain": null,
+      "dmg": {
+        "appPosition": {
+          "x": 180,
+          "y": 170
+        },
+        "applicationFolderPosition": {
+          "x": 480,
+          "y": 170
+        },
+        "windowSize": {
+          "width": 660,
+          "height": 400
+        }
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": false
     }
   }
 }

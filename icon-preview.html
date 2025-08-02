@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirTable CSV Viewer - Icon Preview</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #60a5fa;
+        }
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .icon-item {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .icon-item img {
+            display: block;
+            margin: 0 auto 10px;
+            border-radius: 8px;
+        }
+        .icon-label {
+            font-size: 0.9em;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        .svg-preview {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .svg-preview h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+        }
+        .features {
+            text-align: left;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 40px 0;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .features h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+        }
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+        .features li {
+            padding: 8px 0;
+            color: #e2e8f0;
+        }
+        .features li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 AirTable CSV Viewer Icons</h1>
+        
+        <div class="svg-preview">
+            <h2>Original SVG Design</h2>
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+              <defs>
+                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#4f46e5"/>
+                  <stop offset="100%" style="stop-color:#7c3aed"/>
+                </linearGradient>
+              </defs>
+              
+              <!-- Main container -->
+              <rect width="64" height="64" rx="16" fill="url(#grad)"/>
+              
+              <!-- Simple elegant grid -->
+              <g transform="translate(18, 18)">
+                <!-- Clean 2x2 grid -->
+                <rect x="0" y="0" width="28" height="28" rx="3" stroke="white" stroke-width="2" fill="none" opacity="0.9"/>
+                <line x1="14" y1="0" x2="14" y2="28" stroke="white" stroke-width="2" opacity="0.9"/>
+                <line x1="0" y1="14" x2="28" y2="14" stroke="white" stroke-width="2" opacity="0.9"/>
+              </g>
+              
+              <!-- Corner arrow brackets -->
+              <!-- Top-left bracket -->
+              <g transform="translate(8, 8)">
+                <path d="M4 0 L0 0 L0 4" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.8"/>
+              </g>
+              
+              <!-- Bottom-right bracket -->
+              <g transform="translate(52, 52)">
+                <path d="M0 4 L4 4 L4 0" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.8"/>
+              </g>
+            </svg>
+        </div>
+
+        <div class="icon-grid">
+            <div class="icon-item">
+                <img src="src-tauri/icons/16x16.png" alt="16x16 icon" width="16" height="16">
+                <div class="icon-label">16×16</div>
+            </div>
+            <div class="icon-item">
+                <img src="src-tauri/icons/32x32.png" alt="32x32 icon" width="32" height="32">
+                <div class="icon-label">32×32</div>
+            </div>
+            <div class="icon-item">
+                <img src="src-tauri/icons/64x64.png" alt="64x64 icon" width="64" height="64">
+                <div class="icon-label">64×64</div>
+            </div>
+            <div class="icon-item">
+                <img src="src-tauri/icons/128x128.png" alt="128x128 icon" width="128" height="128">
+                <div class="icon-label">128×128</div>
+            </div>
+            <div class="icon-item">
+                <img src="src-tauri/icons/256x256.png" alt="256x256 icon" width="256" height="256" style="max-width: 100%;">
+                <div class="icon-label">256×256</div>
+            </div>
+            <div class="icon-item">
+                <img src="src-tauri/icons/512x512.png" alt="512x512 icon" width="256" height="256" style="max-width: 100%;">
+                <div class="icon-label">512×512</div>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>Icon Design Features</h2>
+            <ul>
+                <li><strong>Modern Gradient:</strong> Purple-to-indigo gradient (#4f46e5 → #7c3aed)</li>
+                <li><strong>Clean Grid:</strong> 2×2 table representation for CSV data</li>
+                <li><strong>Corner Brackets:</strong> Selection/focus indicators</li>
+                <li><strong>Rounded Corners:</strong> Modern macOS design language</li>
+                <li><strong>High Contrast:</strong> White elements on gradient background</li>
+                <li><strong>Scalable:</strong> Crisp at all sizes from 16×16 to 1024×1024</li>
+                <li><strong>Professional:</strong> Suitable for productivity applications</li>
+            </ul>
+        </div>
+
+        <p style="color: #94a3b8; margin-top: 40px;">
+            Icons generated and integrated into AirTable CSV Viewer v1.0.0
+        </p>
+    </div>
+</body>
+</html>

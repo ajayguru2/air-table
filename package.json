@@ -1,13 +1,21 @@
 {
-  "name": "air-table",
+  "name": "air-table-csv-viewer",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "High-performance CSV viewer and analyzer with advanced trend analysis",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:build:debug": "tauri build --debug",
+    "build:production": "npm run build && npm run tauri:build",
+    "build:mac": "npm run build && tauri build --target aarch64-apple-darwin",
+    "build:mac-intel": "npm run build && tauri build --target x86_64-apple-darwin",
+    "build:universal": "npm run build && tauri build --target universal-apple-darwin"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
