@@ -1,0 +1,130 @@
+name: 🚀 Release Build
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0
+  workflow_dispatch:  # Allow manual triggers
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.0.1)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create-release.outputs.result }}
+      upload_url: ${{ steps.create-release.outputs.upload_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Release
+        id: create-release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: context.ref.replace('refs/tags/', '') || '${{ github.event.inputs.version }}',
+              name: `AirTable CSV Viewer ${ context.ref.replace('refs/tags/', '') || '${{ github.event.inputs.version }}' }`,
+              body: `## 🆕 What's New\n\n- Performance improvements\n- Bug fixes\n- UI enhancements\n\n## 📦 Downloads\n\n- **macOS (Apple Silicon)**: AirTable CSV Viewer_aarch64.dmg\n- **macOS (Intel)**: AirTable CSV Viewer_x64.dmg\n- **Universal**: AirTable CSV Viewer_universal.dmg\n\n## 📋 Requirements\n\n- macOS 10.15 or later\n- 4GB RAM minimum\n- 50MB disk space\n\n---\n\n**Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ github.event.inputs.previous_version || '0.9.0' }}...${ context.ref.replace('refs/tags/', '') || '${{ github.event.inputs.version }}' }`,
+              draft: false,
+              prerelease: false
+            });
+            return data.id;
+
+  build-macos:
+    needs: create-release
+    strategy:
+      matrix:
+        target: [aarch64-apple-darwin, x86_64-apple-darwin, universal-apple-darwin]
+        include:
+          - target: aarch64-apple-darwin
+            os: macos-14  # Apple Silicon runner
+            arch: aarch64
+          - target: x86_64-apple-darwin
+            os: macos-13  # Intel runner
+            arch: x64
+          - target: universal-apple-darwin
+            os: macos-14  # Apple Silicon runner for universal build
+            arch: universal
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate app icons
+        run: |
+          # Install rsvg-convert for icon generation
+          brew install librsvg
+          chmod +x ./generate-icons.sh
+          ./generate-icons.sh
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Build Tauri app
+        run: |
+          npm run tauri build -- --target ${{ matrix.target }}
+        env:
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
+
+      - name: Upload DMG to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: src-tauri/target/${{ matrix.target }}/release/bundle/dmg/AirTable CSV Viewer_1.0.0_${{ matrix.arch }}.dmg
+          asset_name: AirTable CSV Viewer_${{ matrix.arch }}.dmg
+          asset_content_type: application/x-apple-diskimage
+
+      - name: Upload App Bundle (for advanced users)
+        run: |
+          cd "src-tauri/target/${{ matrix.target }}/release/bundle/macos/"
+          tar -czf "AirTable CSV Viewer_${{ matrix.arch }}.app.tar.gz" "AirTable CSV Viewer.app"
+          
+      - name: Upload App Bundle to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: src-tauri/target/${{ matrix.target }}/release/bundle/macos/AirTable CSV Viewer_${{ matrix.arch }}.app.tar.gz
+          asset_name: AirTable CSV Viewer_${{ matrix.arch }}.app.tar.gz
+          asset_content_type: application/gzip
+
+  update-latest-release:
+    needs: [create-release, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update latest release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Mark this release as the latest
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: ${{ needs.create-release.outputs.release_id }},
+              make_latest: 'true'
+            });
