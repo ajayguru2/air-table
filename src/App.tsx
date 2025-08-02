@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Papa from "papaparse";
 import FilePickerScreen from "./FilePickerScreen";
 import CsvViewerScreen from "./CsvViewerScreen";
+import { initializeGPUAcceleration, isGPUAccelerationSupported } from "./utils/performance";
 import "./App.css";
 
 interface CsvData {
@@ -15,6 +16,23 @@ function App() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  // Enable GPU acceleration on mount
+  useEffect(() => {
+    // Check if GPU acceleration is supported
+    if (isGPUAccelerationSupported()) {
+      console.log('GPU acceleration is supported');
+      initializeGPUAcceleration();
+    } else {
+      console.warn('GPU acceleration is not supported');
+    }
+    
+    // Enable hardware acceleration hints
+    const meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.head.appendChild(meta);
+  }, []);
 
   const handleBackToFileSelect = () => {
     setCsvData(null);

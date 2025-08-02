@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { FixedSizeList as List } from 'react-window';
+import { optimizeVirtualScrolling } from './utils/performance';
 
 interface VirtualizedTableProps {
   headers: string[];
@@ -12,31 +13,52 @@ interface VirtualizedTableProps {
   onRowSelect?: (rowIndex: number | null) => void;
 }
 
-const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ headers, rows, height, onSort, sortColumn, sortDirection, selectedRow, onRowSelect }) => {
+const VirtualizedTable: React.FC<VirtualizedTableProps> = React.memo(({ 
+  headers, 
+  rows, 
+  height, 
+  onSort, 
+  sortColumn, 
+  sortDirection, 
+  selectedRow, 
+  onRowSelect 
+}) => {
   const ROW_HEIGHT = 35;
   const HEADER_HEIGHT = 40;
   const listRef = useRef<List>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyContainerRef = useRef<HTMLDivElement>(null);
 
-  const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+  const Row = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
     const row = rows[index];
     const isSelected = selectedRow === index;
     
     return (
       <div 
-        style={style} 
+        style={{
+          ...style,
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          willChange: 'transform, background-color'
+        }} 
         className={`virtual-row ${isSelected ? 'selected' : ''}`}
         onClick={() => onRowSelect?.(isSelected ? null : index)}
       >
         {row.map((cell, cellIndex) => (
-          <div key={cellIndex} className="virtual-cell">
+          <div 
+            key={cellIndex} 
+            className="virtual-cell"
+            style={{
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden'
+            }}
+          >
             {cell}
           </div>
         ))}
       </div>
     );
-  };
+  }, [rows, selectedRow, onRowSelect]);
 
   useEffect(() => {
     const handleBodyScroll = (event: Event) => {
@@ -62,7 +84,10 @@ const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ headers, rows, heig
 
     // Set up the scroll listener with a small delay to ensure the component is rendered
     const timeoutId = setTimeout(() => {
-      findScrollableContainer();
+      const container = findScrollableContainer();
+      if (container) {
+        optimizeVirtualScrolling(container);
+      }
     }, 100);
 
     return () => {
@@ -107,11 +132,20 @@ const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ headers, rows, heig
         itemCount={rows.length}
         itemSize={ROW_HEIGHT}
         width="100%"
+        overscanCount={10}
+        useIsScrolling={false}
+        style={{
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          willChange: 'scroll-position'
+        }}
       >
         {Row}
       </List>
     </div>
   );
-};
+});
+
+VirtualizedTable.displayName = 'VirtualizedTable';
 
 export default VirtualizedTable;

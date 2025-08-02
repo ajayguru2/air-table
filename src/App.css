@@ -14,12 +14,21 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   
+  /* GPU Acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+  
   /* Smooth scrolling */
   scroll-behavior: smooth;
 }
 
 * {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* GPU Acceleration for all elements */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 *:focus {
@@ -36,6 +45,10 @@ body {
 .app {
   min-height: 100vh;
   width: 100%;
+  /* GPU Acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 
@@ -120,6 +133,10 @@ button:disabled {
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease-out;
+  /* GPU Acceleration for smooth overlay */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity, backdrop-filter;
 }
 
 .loading-container {
@@ -301,6 +318,10 @@ tr:hover {
   height: 100%;
   display: flex;
   flex-direction: column;
+  /* GPU Acceleration for smooth scrolling */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: scroll-position;
 }
 
 .virtual-header {
@@ -311,6 +332,10 @@ tr:hover {
   z-index: 2;
   overflow-x: hidden;
   backdrop-filter: blur(10px);
+  /* GPU Acceleration for sticky header */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .virtual-header-content {
@@ -393,7 +418,10 @@ tr:hover {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
+  /* GPU Acceleration for smooth row animations */
   transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, background-color;
 }
 
 .virtual-row:nth-child(even) {
@@ -547,6 +575,129 @@ tr:hover {
 .sort-select:active, .column-select:active {
   transform: translateY(0);
   transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* GPU Acceleration Classes */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+.gpu-accelerated * {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Hardware acceleration for animations */
+@supports (transform: translateZ(0)) {
+  .gpu-accelerated {
+    transform: translateZ(0);
+  }
+}
+
+/* Optimize animations for GPU */
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateZ(0) translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateZ(0) translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateZ(0) translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0) translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateZ(0) translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0) translateX(0);
+  }
+}
+
+/* Optimize transitions for GPU */
+.virtual-row,
+.virtual-header-cell,
+button,
+.sort-select,
+.column-select,
+.search-input {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, background-color, border-color;
+}
+
+/* Optimize hover effects for GPU */
+.virtual-row:hover,
+.virtual-header-cell:hover,
+button:hover,
+.sort-select:hover,
+.column-select:hover,
+.search-input:hover {
+  transform: translateZ(0) translateY(-2px);
+  will-change: transform, background-color;
+}
+
+/* Additional GPU optimizations */
+.csv-container,
+.table-wrapper,
+.analysis-panel,
+.details-sidebar {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, scroll-position;
+}
+
+/* Optimize scrollbars for GPU */
+.table-wrapper::-webkit-scrollbar,
+.csv-container::-webkit-scrollbar {
+  transform: translateZ(0);
+}
+
+/* Force GPU layers for critical elements */
+.virtual-header-content,
+.virtual-row,
+.virtual-cell {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Optimize animations for 60fps */
+@keyframes selectedPulse {
+  0% {
+    transform: translateZ(0) translateX(0) scale(1);
+  }
+  50% {
+    transform: translateZ(0) translateX(4px) scale(1.02);
+  }
+  100% {
+    transform: translateZ(0) translateX(8px) scale(1);
+  }
+}
+
+/* Hardware acceleration for all interactive elements */
+input, select, textarea, button {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, background-color, border-color;
 }
 
 /* Custom dropdown arrow animation */
