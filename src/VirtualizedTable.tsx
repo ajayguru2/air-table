@@ -27,7 +27,7 @@ const VirtualizedTable: React.FC<VirtualizedTableProps> = React.memo(({
   const HEADER_HEIGHT = 40;
   const listRef = useRef<List>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const bodyContainerRef = useRef<HTMLDivElement>(null);
+  const bodyContainerRef = useRef<HTMLElement | null>(null);
 
   const Row = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
     const row = rows[index];

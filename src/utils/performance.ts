@@ -47,7 +47,8 @@ export const optimizeScrollPerformance = (element: HTMLElement): void => {
   element.style.transform = 'translateZ(0)';
   element.style.backfaceVisibility = 'hidden';
   element.style.willChange = 'scroll-position';
-  element.style.overflowScrolling = 'touch'; // For iOS
+  // For iOS
+  (element.style as any).webkitOverflowScrolling = 'touch';
 };
 
 /**

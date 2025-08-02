@@ -88,7 +88,7 @@ function App() {
       console.log('Using streaming parser for large file, size:', fileSizeMB.toFixed(2), 'MB');
       let processedRows = 0;
       let allData: string[][] = [];
-      let startTime = Date.now();
+      // let startTime = Date.now();
       let headers: string[] = [];
       
       setLoadingMessage('Reading file in chunks...');
@@ -124,7 +124,7 @@ function App() {
               parser.abort();
             }
             
-            const elapsed = Date.now() - startTime;
+            // const elapsed = Date.now() - startTime;
             const progress = Math.min((processedRows / 50000) * 90, 90);
             
             setLoadingProgress(progress);

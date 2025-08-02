@@ -24,6 +24,8 @@ const CsvViewerScreen: React.FC<CsvViewerScreenProps> = ({
   const [sortColumn, setSortColumn] = useState<number | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
+  const [analysisPanelHeight, setAnalysisPanelHeight] = useState(250);
+  const [isResizing, setIsResizing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,6 +41,35 @@ const CsvViewerScreen: React.FC<CsvViewerScreenProps> = ({
     window.addEventListener('resize', updateHeight);
     return () => window.removeEventListener('resize', updateHeight);
   }, []);
+
+  // Keyboard shortcuts for resizing
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!showAnalysis) return;
+      
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case '=':
+          case '+':
+            e.preventDefault();
+            setAnalysisPanelHeight(prev => Math.min(prev + 50, containerHeight - 200));
+            break;
+          case '-':
+            e.preventDefault();
+            setAnalysisPanelHeight(prev => Math.max(prev - 50, 150));
+            break;
+          case '0':
+            e.preventDefault();
+            setAnalysisPanelHeight(250); // Reset to default
+            break;
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showAnalysis, containerHeight]);
+
 
   const handleSort = (columnIndex: number) => {
     const direction = sortColumn === columnIndex && sortDirection === 'asc' ? 'desc' : 'asc';
@@ -102,34 +133,68 @@ const CsvViewerScreen: React.FC<CsvViewerScreenProps> = ({
       </div>
 
       <div className="csv-content" ref={containerRef}>
+        <div className="csv-main-content">
+          <div className="csv-table-area">
+            <VirtualizedTable 
+              headers={csvData.headers}
+              rows={displayData}
+              height={showAnalysis ? containerHeight - analysisPanelHeight : containerHeight}
+              onSort={handleSort}
+              sortColumn={sortColumn}
+              sortDirection={sortDirection}
+              selectedRow={selectedRow}
+              onRowSelect={setSelectedRow}
+            />
+          </div>
+          {selectedRow !== null && (
+            <div className="details-sidebar">
+              <RowDetailsPanel
+                headers={csvData.headers}
+                row={displayData[selectedRow]}
+                onClose={() => setSelectedRow(null)}
+              />
+            </div>
+          )}
+        </div>
         {showAnalysis && (
-          <div className="analysis-sidebar">
+          <div 
+            className="analysis-bottom-panel" 
+            style={{ height: analysisPanelHeight }}
+          >
+            <div 
+              className={`resize-handle ${isResizing ? 'resizing' : ''}`}
+              onMouseDown={(e) => {
+                setIsResizing(true);
+                const startY = e.clientY;
+                const startHeight = analysisPanelHeight;
+                document.body.style.cursor = 'ns-resize';
+                document.body.style.userSelect = 'none';
+
+                const handleMouseMove = (moveEvent: MouseEvent) => {
+                  const deltaY = startY - moveEvent.clientY;
+                  const newHeight = Math.min(Math.max(150, startHeight + deltaY), containerHeight - 200);
+                  setAnalysisPanelHeight(newHeight);
+                };
+
+                const handleMouseUp = () => {
+                  setIsResizing(false);
+                  document.body.style.cursor = '';
+                  document.body.style.userSelect = '';
+                  document.removeEventListener('mousemove', handleMouseMove);
+                  document.removeEventListener('mouseup', handleMouseUp);
+                };
+
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+              }}
+            >
+              <div className="resize-handle-bar"></div>
+            </div>
             <AnalysisPanel
               data={csvData.rows}
               headers={csvData.headers}
               onFilter={setDisplayData}
               onSort={setDisplayData}
-            />
-          </div>
-        )}
-        <div className="csv-main">
-          <VirtualizedTable 
-            headers={csvData.headers}
-            rows={displayData}
-            height={containerHeight}
-            onSort={handleSort}
-            sortColumn={sortColumn}
-            sortDirection={sortDirection}
-            selectedRow={selectedRow}
-            onRowSelect={setSelectedRow}
-          />
-        </div>
-        {selectedRow !== null && (
-          <div className="details-sidebar">
-            <RowDetailsPanel
-              headers={csvData.headers}
-              row={displayData[selectedRow]}
-              onClose={() => setSelectedRow(null)}
             />
           </div>
         )}
