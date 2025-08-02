@@ -255,7 +255,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Create an [Issue](https://github.com/your-username/air-table/issues) for bug reports
 - Start a [Discussion](https://github.com/your-username/air-table/discussions) for questions
-- Follow [@AjayGuru0]([https://twitter.com/your-username](https://x.com/AjayGuru0)]) for updates
+- Follow [@AjayGuru0]([https://x.com/AjayGuru0]) for updates
 
 ---
 
