@@ -1,7 +1,7 @@
 {
   "name": "air-table-csv-viewer",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "High-performance CSV viewer and analyzer with advanced trend analysis",
   "type": "module",
   "scripts": {
